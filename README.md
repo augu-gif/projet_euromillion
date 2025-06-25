@@ -43,5 +43,4 @@ Ce projet permet d'analyser les tirages EuroMillions et de générer des combina
 - `generateur_streamlit.py` : interface web pour générer des grilles
 - `resultat.json` : historique des tirages EuroMillions
 
-## Auteur
-- [augu-gif](https://github.com/augu-gif) 
+[Retour au portfolio](https://github.com/augu-gif/mon-portfolio-data/blob/main/README.md)
