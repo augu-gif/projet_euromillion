@@ -171,4 +171,4 @@ prochain_numeros = [num for num, _ in number_counter.most_common(5)]
 prochain_etoiles = [star for star, _ in star_counter.most_common(2)]
 print("\n--- Proposition du prochain tirage le plus probable (statistiquement) ---")
 print(f"Numéros : {', '.join(prochain_numeros)}")
-print(f"Étoiles : {', '.join(prochain_etoiles)}") 
+print(f"Étoiles : {', '.join(prochain_etoiles)}")
