@@ -1,6 +1,14 @@
 # Projet EuroMillions
 
+## Lancer l'application 
+<p align="center">
+  <a href="https://augu-gif-projet-euromillion-generateur-streamlit-vkeyxo.streamlit.app/">
+    <img src="https://streamlit.io/images/brand/streamlit-logo-primary-colormark-darktext.png" alt="Streamlit App" width="200"/>
+  </a>
+</p>
+
 Ce projet permet d'analyser les tirages EuroMillions et de générer des combinaisons de numéros probables ou aléatoires, avec visualisations statistiques.
+
 
 ## Fonctionnalités
 - Analyse des fréquences des numéros et étoiles
