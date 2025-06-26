@@ -57,4 +57,4 @@ if st.button("Générer une grille"):
         st.success(f"Grille aléatoire : Numéros {', '.join(nums)} | Étoiles {', '.join(etoiles)}")
 
 st.markdown("---")
-st.write("Basé sur l'historique du fichier resultat.json. Pour de meilleurs résultats, gardez ce fichier à jour.") 
+st.write("Basé sur l'historique du fichier resultat.json.") 
