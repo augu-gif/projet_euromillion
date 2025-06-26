@@ -25,14 +25,14 @@ number_weights = [number_counter.get(num, 1) for num in all_numbers]
 star_weights = [star_counter.get(star, 1) for star in all_stars]
 
 def tirage_aleatoire_pondere():
-    nums = random.choices(all_numbers, weights=number_weights, k=20)
+    nums = random.choices(all_numbers, weights=number_weights, k=100)
     nums_uniques = []
     for n in nums:
         if n not in nums_uniques:
             nums_uniques.append(n)
         if len(nums_uniques) == 5:
             break
-    etoiles = random.choices(all_stars, weights=star_weights, k=10)
+    etoiles = random.choices(all_stars, weights=star_weights, k=50)
     etoiles_uniques = []
     for e in etoiles:
         if e not in etoiles_uniques:
