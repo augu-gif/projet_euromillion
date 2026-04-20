@@ -66,5 +66,5 @@ Le générateur propose trois modes :
 
 ---
 
-*"Les tirages passés n'influencent pas les tirages futurs"* 🎰
+
 
