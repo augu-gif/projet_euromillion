@@ -1,8 +1,8 @@
-# 🎰 EuroMillions Analytics
+# EuroMillions - Analyse statistique
 
 Une application Streamlit pédagogique pour analyser les données historiques des tirages EuroMillions et explorer les probabilités.
 
-## ⚠️ Avertissement important
+## Avertissement important
 
 **Cette application est strictement pédagogique et exploratoire.** Elle ne prétend pas prédire les tirages futurs ni optimiser les chances de gagner. Chaque tirage EuroMillions est indépendant et les fréquences passées n'influencent pas les résultats futurs.
 
@@ -19,7 +19,7 @@ Une application Streamlit pédagogique pour analyser les données historiques de
 - **Générateur pondéré** : exploration basée sur les fréquences historiques (fréquents/rare)
 - **Générateur multiple** : création de 1 ou 5 grilles à la fois
 
-### Insights avancés
+### Analyse avancée
 - **Probabilités empiriques** : comparaison avec les probabilités théoriques
 - **Répartition** : analyse par dizaines, pairs/impairs, sommes des numéros
 - **Évolution temporelle** : analyse par périodes et années
@@ -55,7 +55,7 @@ Une application Streamlit pédagogique pour analyser les données historiques de
 - Retards et régularité
 - Répartition statistique
 
-## 🎲 Générateur
+## Générateur
 
 Le générateur propose trois modes :
 1. **Uniforme** : chaque combinaison a la même probabilité (recommandé)

@@ -14,25 +14,24 @@ from src.utils import Utils
 
 # Configuration de la page
 st.set_page_config(
-    page_title="EuroMillions Analytics",
-    page_icon="🎰",
+    page_title="EuroMillions - Analyse statistique",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # Titre principal
-st.title("🎰 EuroMillions - Analyse Statistique & Exploration")
+st.title("EuroMillions - Analyse statistique et exploration")
 
 # ================================
 # SECTION À SAVOIR - DISCLAIMER
 # ================================
-st.header("ℹ️ À savoir avant de commencer")
+st.header("À savoir avant de commencer")
 
 disclaimer_col1, disclaimer_col2 = st.columns([2, 1])
 
 with disclaimer_col1:
     st.info("""
-    **⚠️ Avertissement important sur les tirages EuroMillions**
+    **Avertissement important sur les tirages EuroMillions**
 
     Les tirages EuroMillions sont **indépendants**. Chaque tirage est le résultat d'un processus aléatoire où :
     - Les numéros déjà sortis plus souvent n'ont **pas plus de chances** d'être tirés au prochain tour
@@ -48,13 +47,13 @@ with disclaimer_col1:
 
 with disclaimer_col2:
     st.markdown("""
-    **🎯 Objectif de cette application**
+    **Objectif de cette application**
     - Explorer les données historiques
     - Comprendre les fréquences observées
     - Générer des grilles aléatoirement
     - Apprendre sur les probabilités
 
-    **📊 Méthodologie**
+    **Méthodologie**
     - Analyse descriptive uniquement
     - Pas de prédiction statistique
     - Focus sur l'observation des patterns
@@ -109,7 +108,7 @@ generator = data['generator']
 # ================================
 # SIDEBAR - FILTRES ET NAVIGATION
 # ================================
-st.sidebar.title("🔧 Contrôles")
+st.sidebar.title("Contrôles")
 
 # Filtres
 st.sidebar.header("📅 Filtres temporels")
@@ -142,7 +141,7 @@ else:
 # ================================
 # SECTION STATISTIQUES GLOBALES
 # ================================
-st.header("📊 Statistiques globales")
+st.header("Statistiques globales")
 
 overview = current_insights.get_overview_insights()
 
@@ -163,7 +162,7 @@ with col4:
 # ================================
 # SECTION PRIX DÉTAILLÉS
 # ================================
-st.subheader("💰 Analyse détaillée des prix")
+st.subheader("Analyse détaillée des prix")
 
 price_col1, price_col2, price_col3, price_col4 = st.columns(4)
 
@@ -182,7 +181,7 @@ with price_col4:
 # Distribution des prix
 prize_stats = current_stats.get_prize_stats()
 if not pd.isna(prize_stats['moyen']):
-    st.markdown("**📊 Distribution des prix :**")
+    st.markdown("**Distribution des prix :**")
     prizes = current_stats.df['prize'].dropna()
 
     col1, col2 = st.columns(2)
@@ -213,7 +212,7 @@ if not pd.isna(prize_stats['moyen']):
         st.plotly_chart(fig_box, width='stretch')
 
 # Détails supplémentaires
-with st.expander("📈 Voir plus de statistiques"):
+with st.expander("Voir plus de statistiques"):
     col1, col2 = st.columns(2)
 
     with col1:
@@ -230,7 +229,7 @@ st.markdown("---")
 # ================================
 # SECTION FRÉQUENCES
 # ================================
-st.header("📈 Fréquences d'apparition")
+st.header("Fréquences d'apparition")
 
 freq_insights = current_insights.get_frequency_insights()
 
@@ -271,12 +270,12 @@ with tab1:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("🏆 Top 5 numéros les plus fréquents")
+        st.subheader("Top 5 numéros les plus fréquents")
         for item in freq_insights['top_5_numeros']:
             st.write(f"**{int(item['numero'])}** : {int(item['frequence'])} fois ({item['pourcentage']:.2f}%)")
 
     with col2:
-        st.subheader("📉 Top 5 numéros les moins fréquents")
+        st.subheader("Top 5 numéros les moins fréquents")
         for item in freq_insights['bottom_5_numeros']:
             st.write(f"**{int(item['numero'])}** : {int(item['frequence'])} fois ({item['pourcentage']:.2f}%)")
 
@@ -315,12 +314,12 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("⭐ Top 5 étoiles les plus fréquentes")
+        st.subheader("Top 5 étoiles les plus fréquentes")
         for item in freq_insights['top_5_etoiles']:
             st.write(f"**{int(item['etoile'])}** : {int(item['frequence'])} fois ({item['pourcentage']:.2f}%)")
 
     with col2:
-        st.subheader("🌟 Top 5 étoiles les moins fréquentes")
+        st.subheader("Top 5 étoiles les moins fréquentes")
         for item in freq_insights['bottom_5_etoiles']:
             st.write(f"**{int(item['etoile'])}** : {int(item['frequence'])} fois ({item['pourcentage']:.2f}%)")
 
@@ -329,20 +328,20 @@ st.markdown("---")
 # ================================
 # SECTION RÉGULARITÉ ET RETARDS
 # ================================
-st.header("⏰ Régularité et retards")
+st.header("Régularité et retards")
 
 regularity = current_insights.get_regularity_insights()
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("🐌 Plus grands retards (numéros)")
+    st.subheader("Plus grands retards (numéros)")
     st.write("*Nombre de tirages depuis la dernière apparition*")
     for item in regularity['plus_grand_retard_numeros'][:10]:
         st.write(f"**{int(item['numero'])}** : {int(item['retard_max'])} tirages")
 
 with col2:
-    st.subheader("🆕 Numéros les plus récents")
+    st.subheader("Numéros les plus récents")
     for item in regularity['numeros_plus_recents']:
         st.write(f"**{int(item['numero'])}** : {item['derniere_apparition'].strftime('%d/%m/%Y')}")
 
@@ -365,7 +364,7 @@ st.markdown("---")
 # ================================
 # SECTION GÉNÉRATEUR DE GRILLES
 # ================================
-st.header("🎲 Générateur de grilles EuroMillions")
+st.header("Générateur de grilles EuroMillions")
 
 st.warning("""
 **Rappel :** Ce générateur est uniquement à des fins **exploratoires et ludiques**.
@@ -399,7 +398,7 @@ with col2:
     )
 
 with col3:
-    generate_button = st.button("🎲 Générer", type="primary", width='stretch')
+    generate_button = st.button("Générer", type="primary", width='stretch')
 
 # Génération et affichage
 if generate_button:
@@ -410,9 +409,9 @@ if generate_button:
 
         col1, col2 = st.columns([3, 1])
         with col1:
-            st.markdown("**Numéros :** " + "  ".join(f"🔵 **{n}**" for n in numbers))
+            st.markdown("**Numéros :** " + "  ".join(str(n) for n in numbers))
         with col2:
-            st.markdown("**Étoiles :** " + "  ".join(f"⭐ **{s}**" for s in stars))
+            st.markdown("**Étoiles :** " + "  ".join(str(s) for s in stars))
 
     else:
         grids = generator.generate_multiple_grids(num_grids, generator_mode)
@@ -421,9 +420,9 @@ if generate_button:
             st.markdown(f"**Grille {i} :**")
             col1, col2 = st.columns([3, 1])
             with col1:
-                st.markdown("Numéros : " + "  ".join(f"🔵 {n}" for n in numbers))
+                st.markdown("Numéros : " + "  ".join(str(n) for n in numbers))
             with col2:
-                st.markdown("Étoiles : " + "  ".join(f"⭐ {s}" for s in stars))
+                st.markdown("Étoiles : " + "  ".join(str(s) for s in stars))
             if i < num_grids:
                 st.markdown("---")
 
@@ -434,7 +433,7 @@ st.markdown("---")
 # ================================
 st.header("🔍 Insights avancés")
 
-with st.expander("📊 Probabilités empiriques vs théoriques"):
+with st.expander("Probabilités empiriques vs théoriques"):
     prob_insights = current_insights.get_probability_insights()
 
     col1, col2 = st.columns(2)
@@ -449,7 +448,7 @@ with st.expander("📊 Probabilités empiriques vs théoriques"):
         st.write(f"**Probabilité théorique :** {prob_insights['probabilite_theorique_etoile']:.3f} (2/12)")
         st.write(f"**Probabilité empirique moyenne :** {prob_insights['probabilite_empirique_moyenne_etoile']:.3f}")
 
-with st.expander("📈 Répartition des numéros"):
+with st.expander("Répartition des numéros"):
     dist_insights = current_insights.get_distribution_insights()
 
     col1, col2 = st.columns(2)
@@ -487,7 +486,7 @@ with st.expander("📈 Répartition des numéros"):
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: gray; font-size: small;'>
-    <p>🎰 EuroMillions Analytics - Analyse pédagogique des données historiques</p>
+    <p>EuroMillions - Analyse pédagogique des données historiques</p>
     <p><em>"Les tirages passés n'influencent pas les tirages futurs"</em></p>
 </div>
 """, unsafe_allow_html=True)
