@@ -1,6 +1,6 @@
 # EuroMillions - Analyse statistique
 
-Une application Streamlit pédagogique pour analyser les données historiques des tirages EuroMillions et explorer les probabilités.
+Une application Streamlit pour analyser les données historiques des tirages EuroMillions et explorer les probabilités.
 
 ## Avertissement important
 
