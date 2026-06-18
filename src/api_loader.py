@@ -1,7 +1,6 @@
 import json
 from typing import List, Dict, Any
 from urllib import request, error
-from typing import Optional
 
 
 class EuroMillionsAPIClient:
@@ -39,70 +38,7 @@ class EuroMillionsAPIClient:
 
         # Normaliser chaque tirage
         normalized = [self._normalize_draw(d) for d in data]
-
-        # Si les objets ne contiennent pas de numéros, essayer d'appeler
-        # les endpoints FDJ de résultats en se basant sur 'external_id' ou 'id'.
-        if normalized and not any(isinstance(d.get('numbers'), (list, tuple)) and len(d.get('numbers')) >= 5 for d in normalized):
-            for i, item in enumerate(normalized):
-                # essayer récupérer un résultat détaillé pour cet item
-                detailed = self._try_fdj_detail_fetch(item)
-                if detailed:
-                    normalized[i] = detailed
-
         return normalized
-
-    def _try_fdj_detail_fetch(self, item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Tentative de récupération des numéros depuis les endpoints FDJ connus.
-
-        Retourne un objet normalisé si succès, sinon None.
-        """
-        raw = item.get('_raw', {}) if isinstance(item, dict) else {}
-        candidates = []
-        # Priorité: external_id puis id
-        ext = raw.get('external_id') or raw.get('externalId')
-        _id = raw.get('id')
-        base = 'https://www.sto.api.fdj.fr'
-
-        if ext:
-            candidates += [
-                f"{base}/anonymous/service-draw-result/v3/draws/{ext}",
-                f"{base}/anonymous/service-draw-result/v3/draws/{ext}/result",
-                f"{base}/anonymous/service-draw-result/v1/draws/{ext}",
-            ]
-        if _id:
-            candidates += [
-                f"{base}/anonymous/service-draw-result/v3/draws/{_id}",
-            ]
-
-        # Essayer chaque candidate
-        for url in candidates:
-            try:
-                req = request.Request(url, headers={'User-Agent': 'python-urllib/3'})
-                with request.urlopen(req, timeout=self.timeout) as resp:
-                    rawb = resp.read()
-                    try:
-                        parsed = json.loads(rawb.decode('utf-8'))
-                    except Exception:
-                        continue
-                    # Si la réponse contient une clé 'data' ou 'result', normaliser
-                    if isinstance(parsed, dict):
-                        if 'data' in parsed and isinstance(parsed['data'], (dict, list)):
-                            parsed = parsed['data']
-                        # Si c'est un dict représentant un tirage
-                        if isinstance(parsed, dict):
-                            norm = self._normalize_draw(parsed)
-                            if isinstance(norm.get('numbers'), (list, tuple)) and len(norm.get('numbers')) >= 5:
-                                return norm
-                    # Si c'est une liste, prendre le premier et normaliser
-                    if isinstance(parsed, list) and parsed:
-                        norm = self._normalize_draw(parsed[0])
-                        if isinstance(norm.get('numbers'), (list, tuple)) and len(norm.get('numbers')) >= 5:
-                            return norm
-            except Exception:
-                # ignorer et essayer l'url suivante
-                continue
-
-        return None
 
     def _normalize_draw(self, d: Dict[str, Any]) -> Dict[str, Any]:
         # Champs candidats pour la date
