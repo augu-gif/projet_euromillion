@@ -35082,119 +35082,153 @@
     "date": "Tue, 21 Apr 2026 00:00:00 GMT",
     "draw_id": 1939,
     "has_winner": true,
+    "id": 2,
     "numbers": ["13", "16", "29", "40", "47"],
+    "prize": 144525198,
     "stars": ["3", "4"]
   },
   {
     "date": "Fri, 24 Apr 2026 00:00:00 GMT",
     "draw_id": 1940,
     "has_winner": false,
+    "id": 3,
     "numbers": ["25", "26", "30", "40", "45"],
+    "prize": 17000000,
     "stars": ["1", "5"]
   },
   {
     "date": "Tue, 28 Apr 2026 00:00:00 GMT",
     "draw_id": 1941,
     "has_winner": false,
+    "id": 4,
     "numbers": ["26", "29", "41", "46", "47"],
+    "prize": 26211265,
     "stars": ["8", "9"]
   },
   {
     "date": "Fri, 01 May 2026 00:00:00 GMT",
     "draw_id": 1942,
     "has_winner": false,
+    "id": 5,
     "numbers": ["3", "9", "42", "46", "47"],
+    "prize": 39355091,
     "stars": ["1", "11"]
   },
   {
     "date": "Tue, 05 May 2026 00:00:00 GMT",
     "draw_id": 1943,
     "has_winner": false,
+    "id": 6,
     "numbers": ["3", "4", "8", "20", "31"],
+    "prize": 49453599,
     "stars": ["6", "8"]
   },
   {
     "date": "Fri, 08 May 2026 00:00:00 GMT",
     "draw_id": 1944,
     "has_winner": false,
+    "id": 7,
     "numbers": ["2", "17", "19", "34", "37"],
+    "prize": 62875957,
     "stars": ["8", "11"]
   },
   {
     "date": "Tue, 12 May 2026 00:00:00 GMT",
     "draw_id": 1945,
     "has_winner": false,
+    "id": 8,
     "numbers": ["4", "26", "32", "35", "36"],
+    "prize": 71851521,
     "stars": ["5", "7"]
   },
   {
     "date": "Fri, 15 May 2026 00:00:00 GMT",
     "draw_id": 1946,
     "has_winner": false,
+    "id": 9,
     "numbers": ["3", "10", "38", "41", "43"],
+    "prize": 83287333,
     "stars": ["2", "9"]
   },
   {
     "date": "Tue, 19 May 2026 00:00:00 GMT",
     "draw_id": 1947,
     "has_winner": false,
+    "id": 10,
     "numbers": ["2", "12", "20", "38", "45"],
+    "prize": 92722477,
     "stars": ["2", "5"]
   },
   {
     "date": "Fri, 22 May 2026 00:00:00 GMT",
     "draw_id": 1948,
     "has_winner": false,
+    "id": 11,
     "numbers": ["6", "22", "26", "31", "37"],
+    "prize": 105432709,
     "stars": ["5", "8"]
   },
   {
     "date": "Tue, 26 May 2026 00:00:00 GMT",
     "draw_id": 1949,
     "has_winner": false,
+    "id": 12,
     "numbers": ["6", "23", "25", "35", "37"],
+    "prize": 115489593,
     "stars": ["6", "12"]
   },
   {
     "date": "Fri, 29 May 2026 00:00:00 GMT",
     "draw_id": 1950,
     "has_winner": false,
+    "id": 13,
     "numbers": ["5", "14", "18", "31", "35"],
+    "prize": 129806398,
     "stars": ["2", "12"]
   },
   {
     "date": "Tue, 02 Jun 2026 00:00:00 GMT",
     "draw_id": 1951,
     "has_winner": false,
+    "id": 14,
     "numbers": ["6", "9", "17", "18", "42"],
+    "prize": 142961067,
     "stars": ["7", "9"]
   },
   {
     "date": "Fri, 05 Jun 2026 00:00:00 GMT",
     "draw_id": 1952,
     "has_winner": false,
+    "id": 15,
     "numbers": ["5", "6", "16", "17", "49"],
+    "prize": 160606603,
     "stars": ["2", "12"]
   },
   {
     "date": "Tue, 09 Jun 2026 00:00:00 GMT",
     "draw_id": 1953,
     "has_winner": true,
+    "id": 16,
     "numbers": ["2", "7", "23", "44", "46"],
+    "prize": 174984088,
     "stars": ["3", "5"]
   },
   {
     "date": "Fri, 12 Jun 2026 00:00:00 GMT",
     "draw_id": 1954,
     "has_winner": false,
+    "id": 17,
     "numbers": ["4", "7", "14", "22", "23"],
+    "prize": 17000000,
     "stars": ["1", "7"]
   },
   {
     "date": "Tue, 16 Jun 2026 00:00:00 GMT",
     "draw_id": 1955,
     "has_winner": false,
+    "id": 18,
     "numbers": ["18", "25", "31", "37", "45"],
+    "prize": 26335225,
     "stars": ["4", "9"]
   }
 ]
