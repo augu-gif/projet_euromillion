@@ -121,6 +121,91 @@ api_url = st.sidebar.text_input(
 
 load_api_button = st.sidebar.button("Charger depuis l'API")
 
+
+def do_load(url: str):
+    """Tentative centralisée de chargement depuis une URL donnée."""
+    if not url:
+        st.sidebar.error("URL vide")
+        return
+    st.session_state['api_url'] = url
+    try:
+        raw_api_data = fetch_api_draws(url)
+
+        # Vérification rapide : l'API renvoie-t-elle des numéros ?
+        has_numbers = any(isinstance(d.get('numbers'), (list, tuple)) and len(d.get('numbers')) >= 5 for d in raw_api_data)
+
+        if not has_numbers:
+            st.sidebar.warning("L'API semble ne pas renvoyer de numéros complets (probablement des métadonnées FDJ).")
+            with st.sidebar.expander('Afficher échantillon JSON brut'):
+                import json as _json
+                st.sidebar.code(_json.dumps(raw_api_data[:5], ensure_ascii=False, indent=2))
+            st.sidebar.info("Utilisez 'Essayer sources alternatives' si disponible, ou 'Charger malgré tout'.")
+        else:
+            st.session_state['api_data'] = prepare_data(raw_api_data)
+            st.sidebar.success("Données API chargées avec succès.")
+
+    except Exception as e:
+        st.sidebar.error(f"Impossible de charger l'API : {e}")
+
+# Boutons rapides pour endpoints connus
+if st.sidebar.button("Charger FDJ"):
+    fdj_url = known_endpoints.get('FDJ (métadonnées, pas forcément numéros)')
+    do_load(fdj_url)
+
+if st.sidebar.button("Charger Pedro"):
+    pedro_url = known_endpoints.get("Pedro's public API (si disponible)")
+    do_load(pedro_url)
+
+if st.sidebar.button("Charger LoteriasAPI"):
+    lot_url = known_endpoints.get('LoteriasAPI (requiert clé)')
+    do_load(lot_url)
+
+# Tester les endpoints connus et afficher un rapport
+def probe_endpoints(endpoints: dict):
+    import urllib.request, json
+    results = {}
+    for name, url in endpoints.items():
+        if not url:
+            results[name] = {'url': '', 'http': 'n/a', 'has_numbers': False, 'note': 'no-url'}
+            continue
+        res = {'url': url, 'http': None, 'has_numbers': False, 'note': None}
+        try:
+            client = EuroMillionsAPIClient(url)
+            draws = client.fetch_draws()
+            res['has_numbers'] = any(isinstance(d.get('numbers'), (list, tuple)) and len(d.get('numbers'))>=5 for d in draws)
+            res['http'] = '200 (client)'
+            res['sample_keys'] = list(draws[0].keys()) if draws else []
+        except Exception as e:
+            res['note'] = str(e)
+        # raw HTTP status/snippet
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent':'Mozilla/5.0','Accept':'application/json'})
+            with urllib.request.urlopen(req, timeout=10) as r:
+                res['http'] = getattr(r, 'status', None)
+                body = r.read(800)
+                try:
+                    res['snippet'] = body.decode('utf-8', errors='replace')[:400]
+                except Exception:
+                    res['snippet'] = str(body)[:400]
+        except Exception as e:
+            if not res.get('http'):
+                res['http'] = 'error'
+            if not res.get('note'):
+                res['note'] = str(e)
+
+        results[name] = res
+    return results
+
+if st.sidebar.button('Tester endpoints connus'):
+    with st.sidebar.expander('Résultats des probes'):
+        probe_results = probe_endpoints(known_endpoints)
+        for name, r in probe_results.items():
+            st.write(f"**{name}** — `{r.get('url')}`")
+            st.write(f"HTTP: {r.get('http')} — Has numbers: {r.get('has_numbers')} — Note: {r.get('note')}")
+            if r.get('snippet'):
+                st.code(r.get('snippet'))
+            st.markdown('---')
+
 if load_api_button:
     st.session_state['api_url'] = api_url
     try:
