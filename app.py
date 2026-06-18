@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 from collections import Counter
 
 # Import des nouveaux modules
+from src.api_loader import EuroMillionsAPIClient
 from src.loader import DataLoader
 from src.cleaning import DataCleaner
 from src.stats import StatisticsCalculator
@@ -64,39 +65,72 @@ st.markdown("---")
 # ================================
 # CHARGEMENT ET PRÉPARATION DES DONNÉES
 # ================================
+
+def prepare_data(raw_data):
+    """Prépare les données brutes en objets de l'application."""
+    cleaner = DataCleaner(raw_data)
+    df = cleaner.clean_and_normalize()
+    stats_calc = StatisticsCalculator(df)
+    insights_calc = InsightsCalculator(stats_calc)
+    generator = GridGenerator(stats_calc.number_freq, stats_calc.star_freq)
+
+    return {
+        'df': df,
+        'stats': stats_calc,
+        'insights': insights_calc,
+        'generator': generator
+    }
+
 @st.cache_data
-def load_and_prepare_data():
-    """Charge et prépare les données avec la nouvelle architecture"""
+def load_local_data():
+    """Charge les données locales et prépare les objets d'analyse."""
+    loader = DataLoader("data/resultat_trie.json")
+    raw_data = loader.load()
+    return prepare_data(raw_data)
+
+@st.cache_data
+def fetch_api_draws(api_url: str):
+    """Récupère les tirages depuis l'API distante."""
+    client = EuroMillionsAPIClient(api_url)
+    return client.fetch_draws()
+
+if 'api_data' not in st.session_state:
+    st.session_state['api_data'] = None
+    st.session_state['api_url'] = ''
+
+# Sidebar de configuration API
+st.sidebar.header("🌐 Source de données")
+api_url = st.sidebar.text_input(
+    "URL de l'API des derniers tirages",
+    value=st.session_state['api_url'],
+    placeholder="https://example.com/api/euromillions",
+    help="Entrez l'URL d'une API REST renvoyant une liste JSON de tirages EuroMillions"
+)
+load_api_button = st.sidebar.button("Charger depuis l'API")
+
+if load_api_button:
+    st.session_state['api_url'] = api_url
     try:
-        # Chargement
-        loader = DataLoader("data/resultat_trie.json")
-        raw_data = loader.load()
-
-        # Nettoyage
-        cleaner = DataCleaner(raw_data)
-        df = cleaner.clean_and_normalize()
-
-        # Statistiques
-        stats_calc = StatisticsCalculator(df)
-
-        # Insights
-        insights_calc = InsightsCalculator(stats_calc)
-
-        # Générateur
-        generator = GridGenerator(stats_calc.number_freq, stats_calc.star_freq)
-
-        return {
-            'df': df,
-            'stats': stats_calc,
-            'insights': insights_calc,
-            'generator': generator
-        }
-
+        raw_api_data = fetch_api_draws(api_url)
+        st.session_state['api_data'] = prepare_data(raw_api_data)
+        st.sidebar.success("Données API chargées avec succès.")
     except Exception as e:
-        st.error(f"Erreur lors du chargement des données : {e}")
-        return None
+        st.sidebar.error(f"Impossible de charger l'API : {e}")
 
-data = load_and_prepare_data()
+if st.session_state['api_data'] is not None and api_url:
+    data = st.session_state['api_data']
+    data_source = f"API ({api_url})"
+else:
+    data = load_local_data()
+    data_source = "local"
+
+if data is None:
+    st.error("Erreur lors du chargement des données. Vérifiez la source de données.")
+    st.stop()
+
+st.sidebar.info(f"Source de données utilisée : {data_source}")
+
+# Données prêtes
 if data is None:
     st.stop()
 
