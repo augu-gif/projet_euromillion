@@ -100,92 +100,32 @@ if 'api_data' not in st.session_state:
 
 # Sidebar de configuration API
 st.sidebar.header("🌐 Source de données")
-
-# Endpoints connus (pré-remplis)
-known_endpoints = {
-    'Sélectionner...': '',
-    'FDJ (métadonnées, pas forcément numéros)': 'https://www.sto.api.fdj.fr/anonymous/service-draw-info/v3/draws?game_name=euromillions&current=true',
-    'FDJ (historique métadonnées)': 'https://www.sto.api.fdj.fr/anonymous/service-draw-info/v3/draws?game_name=euromillions',
-    "Pedro's public API (si disponible)": 'https://euromillions.api.pedromealha.dev/draws/latest',
-    'LoteriasAPI (requiert clé)': 'https://api.loteriasapi.com/v1/results/euromillones/latest'
-}
-
-endpoint_choice = st.sidebar.selectbox("Endpoints connus", list(known_endpoints.keys()), index=0)
-
 api_url = st.sidebar.text_input(
     "URL de l'API des derniers tirages",
-    value=st.session_state.get('api_url', '') or known_endpoints.get(endpoint_choice, ''),
+    value=st.session_state['api_url'],
     placeholder="https://example.com/api/euromillions",
     help="Entrez l'URL d'une API REST renvoyant une liste JSON de tirages EuroMillions"
 )
-
 load_api_button = st.sidebar.button("Charger depuis l'API")
 
 if load_api_button:
     st.session_state['api_url'] = api_url
     try:
         raw_api_data = fetch_api_draws(api_url)
-
-        # Vérification rapide : l'API renvoie-t-elle des numéros ?
-        has_numbers = any(isinstance(d.get('numbers'), (list, tuple)) and len(d.get('numbers')) >= 5 for d in raw_api_data)
-
-        if not has_numbers:
-            st.sidebar.warning("L'API semble ne pas renvoyer de numéros complets (probablement des métadonnées FDJ).")
-            with st.sidebar.expander('Afficher échantillon JSON brut'):
-                import json as _json
-                st.sidebar.code(_json.dumps(raw_api_data[:5], ensure_ascii=False, indent=2))
-
-            if st.sidebar.button("Essayer sources alternatives (Pedro/Loterias)"):
-                tried = False
-                alt_list = [known_endpoints.get("Pedro's public API (si disponible)"), known_endpoints.get('LoteriasAPI (requiert clé)')]
-                for alt in alt_list:
-                    if not alt:
-                        continue
-                    try:
-                        alt_raw = fetch_api_draws(alt)
-                        alt_has_numbers = any(isinstance(d.get('numbers'), (list, tuple)) and len(d.get('numbers')) >= 5 for d in alt_raw)
-                        if alt_has_numbers:
-                            st.session_state['api_data'] = prepare_data(alt_raw)
-                            st.sidebar.success(f"Récupération réussie depuis : {alt}")
-                            tried = True
-                            break
-                        else:
-                            st.sidebar.warning(f"Source alternative {alt} ne renvoie pas de numéros complets.")
-                    except Exception as e:
-                        st.sidebar.warning(f"Échec récupération depuis {alt} : {e}")
-
-                if not tried:
-                    st.sidebar.error("Aucune source alternative n'a renvoyé de numéros complets. Utilisez le fichier local ou choisissez un autre endpoint.")
-
-            if st.sidebar.button("Charger malgré tout (risque d'erreur)"):
-                try:
-                    prepared = prepare_data(raw_api_data)
-                    # si DataFrame vide, signaler
-                    if prepared['df'].empty:
-                        st.sidebar.error("Les données préparées sont vides — aucune ligne valide (5 numéros + 2 étoiles). Utilise le fichier local ou un autre endpoint.")
-                    else:
-                        st.session_state['api_data'] = prepared
-                        st.sidebar.success("Données API chargées (malgré avertissement).")
-                except Exception as e:
-                    st.sidebar.error(f"Erreur lors de la préparation des données : {e}")
-            else:
-                st.sidebar.info("Aucun changement effectué. Utilise le fichier local ou choisis un autre endpoint.")
-        else:
-            st.session_state['api_data'] = prepare_data(raw_api_data)
-            st.sidebar.success("Données API chargées avec succès.")
-
+        st.session_state['api_data'] = prepare_data(raw_api_data)
+        st.sidebar.success("Données API chargées avec succès.")
     except Exception as e:
         st.sidebar.error(f"Impossible de charger l'API : {e}")
 
-if st.session_state['api_data'] is not None and st.session_state.get('api_url'):
+if st.session_state['api_data'] is not None and api_url:
     data = st.session_state['api_data']
-    data_source = f"API ({st.session_state.get('api_url')})"
+    data_source = f"API ({api_url})"
 else:
     data = load_local_data()
     data_source = "local"
 
 if data is None:
-    st.error("Erreur lors du chargement des données. Vérifie la source de données.")
+    st.error("Erreur lors du chargement des données. Vérifiez la source de données.")
     st.stop()
 
 st.sidebar.info(f"Source de données utilisée : {data_source}")
