@@ -110,22 +110,6 @@ generator = data['generator']
 # ================================
 st.sidebar.title("Contrôles")
 
-# Mise à jour JSON externe
-st.sidebar.header("⚙️ Mise à jour des données")
-update_url = st.sidebar.text_input(
-    "URL JSON des derniers résultats",
-    value="https://euromillions.api.pedromealha.dev/draws/latest",
-    help="Entrez un endpoint JSON pouvant fournir les derniers tirages EuroMillions"
-)
-if st.sidebar.button("Mettre à jour resultat_trie.json"):
-    try:
-        loader = DataLoader("data/resultat_trie.json")
-        updated_data = loader.update_from_external_source(update_url)
-        st.sidebar.success(f"Fichier mis à jour avec succès ({len(updated_data)} tirages au total).")
-        st.experimental_rerun()
-    except Exception as e:
-        st.sidebar.error(f"Mise à jour échouée : {e}")
-
 # Filtres
 st.sidebar.header("📅 Filtres temporels")
 years = Utils.get_years_list(df)
