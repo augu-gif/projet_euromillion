@@ -31,10 +31,12 @@ Une application Streamlit pédagogique pour analyser les données historiques de
 
 ## Données
 
-- **Source** : fichier `data/resultat_trie.json`
+- **Source** : fichier local `data/resultat_trie.json`
 - **Période** : 2004 à 2026
-- **Tirages** : ~1,945 tirages validés
-- **Format** : JSON avec dates, numéros, étoiles, prix, gagnants
+- **Tirages** : 1 961 tirages validés
+- **Format** : JSON avec dates, numéros, étoiles, prix et indicateur de gagnant
+
+> L'application n'utilise pas d'API externe ; elle charge les données uniquement depuis le fichier local.
 
 ## Technologies
 
