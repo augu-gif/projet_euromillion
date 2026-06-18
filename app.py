@@ -110,33 +110,89 @@ generator = data['generator']
 # ================================
 st.sidebar.title("Contrôles")
 
+# Mise à jour JSON externe
+st.sidebar.header("⚙️ Mise à jour des données")
+update_url = st.sidebar.text_input(
+    "URL JSON des derniers résultats",
+    value="https://euromillions.api.pedromealha.dev/draws/latest",
+    help="Entrez un endpoint JSON pouvant fournir les derniers tirages EuroMillions"
+)
+if st.sidebar.button("Mettre à jour resultat_trie.json"):
+    try:
+        loader = DataLoader("data/resultat_trie.json")
+        updated_data = loader.update_from_external_source(update_url)
+        st.sidebar.success(f"Fichier mis à jour avec succès ({len(updated_data)} tirages au total).")
+        st.experimental_rerun()
+    except Exception as e:
+        st.sidebar.error(f"Mise à jour échouée : {e}")
+
 # Filtres
 st.sidebar.header("📅 Filtres temporels")
 years = Utils.get_years_list(df)
-selected_year = st.sidebar.selectbox(
-    "Filtrer par année",
-    ["Toutes les années"] + years,
-    help="Sélectionnez une année spécifique ou gardez toutes les années"
+period_mode = st.sidebar.radio(
+    "Mode de filtre",
+    ["Toutes les années", "Année", "Période précise"],
+    index=0,
+    help="Choisissez un filtre par année ou définissez une période précise"
 )
 
+selected_year = "Toutes les années"
+start_date = None
+end_date = None
+
+if period_mode == "Année":
+    selected_year = st.sidebar.selectbox(
+        "Filtrer par année",
+        ["Toutes les années"] + years,
+        help="Sélectionnez une année spécifique"
+    )
+elif period_mode == "Période précise":
+    min_date = df['date'].min().date()
+    max_date = df['date'].max().date()
+    start_date, end_date = st.sidebar.date_input(
+        "Période",
+        value=(min_date, max_date),
+        min_value=min_date,
+        max_value=max_date,
+        help="Sélectionnez une plage de dates pour filtrer les tirages"
+    )
+    if isinstance(start_date, (tuple, list)) and len(start_date) == 2:
+        start_date, end_date = start_date
+
 # Appliquer le filtre
-if selected_year != "Toutes les années":
+filtered_df = None
+period_text = f"{df['date'].min().strftime('%d/%m/%Y')} - {df['date'].max().strftime('%d/%m/%Y')}"
+
+if period_mode == "Année" and selected_year != "Toutes les années":
     filtered_df = Utils.filter_by_year(df, selected_year)
     if filtered_df is not None and not filtered_df.empty:
-        # Recalculer les stats pour l'année filtrée
         filtered_stats = StatisticsCalculator(filtered_df)
         current_stats = filtered_stats
         current_insights = InsightsCalculator(filtered_stats)
         period_text = f"Année {selected_year}"
     else:
-        st.sidebar.warning("Aucune donnée pour cette année sélectionnée.")
+        st.sidebar.warning("Aucune donnée pour l'année sélectionnée.")
         current_stats = stats_calc
         current_insights = insights_calc
-        period_text = "Toutes les années"
+elif period_mode == "Période précise":
+    if start_date is None or end_date is None:
+        st.sidebar.warning("Veuillez sélectionner une période valide.")
+        current_stats = stats_calc
+        current_insights = insights_calc
+    else:
+        filtered_df = Utils.filter_by_date_range(df, start_date, end_date)
+        if filtered_df is not None and not filtered_df.empty:
+            filtered_stats = StatisticsCalculator(filtered_df)
+            current_stats = filtered_stats
+            current_insights = InsightsCalculator(filtered_stats)
+            period_text = f"{start_date.strftime('%d/%m/%Y')} - {end_date.strftime('%d/%m/%Y')}"
+        else:
+            st.sidebar.warning("Aucune donnée pour la période sélectionnée.")
+            current_stats = stats_calc
+            current_insights = insights_calc
 else:
     current_stats = stats_calc
     current_insights = insights_calc
-    period_text = f"{df['date'].min().strftime('%d/%m/%Y')} - {df['date'].max().strftime('%d/%m/%Y')}"
 
 # ================================
 # SECTION STATISTIQUES GLOBALES
@@ -486,7 +542,7 @@ with st.expander("Répartition des numéros"):
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: gray; font-size: small;'>
-    <p>EuroMillions - Analyse pédagogique des données historiques</p>
+    <p>EuroMillions - Analyse des données historiques</p>
     <p><em>"Les tirages passés n'influencent pas les tirages futurs"</em></p>
 </div>
 """, unsafe_allow_html=True)
