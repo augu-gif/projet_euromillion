@@ -1,4 +1,94 @@
 import json
+from typing import List, Dict, Any
+from urllib import request, error
+
+
+class EuroMillionsAPIClient:
+    """Client minimaliste pour récupérer des tirages EuroMillions depuis une URL JSON.
+
+    Le client tente de normaliser différents formats retournés par des APIs publiques.
+    """
+
+    def __init__(self, url: str, timeout: int = 10):
+        self.url = url
+        self.timeout = timeout
+
+    def fetch_draws(self) -> List[Dict[str, Any]]:
+        req = request.Request(self.url, headers={'User-Agent': 'python-urllib/3'})
+        try:
+            with request.urlopen(req, timeout=self.timeout) as resp:
+                raw = resp.read()
+                data = json.loads(raw.decode('utf-8'))
+        except error.HTTPError as e:
+            raise RuntimeError(f"HTTP error: {e.code} {e.reason}")
+        except error.URLError as e:
+            raise RuntimeError(f"URL error: {e}")
+        except Exception as e:
+            raise RuntimeError(f"Erreur lors de la récupération: {e}")
+
+        # Si réponse encadrée par 'data' ou 'results'
+        if isinstance(data, dict):
+            for k in ('data', 'results', 'draws'):
+                if k in data and isinstance(data[k], list):
+                    data = data[k]
+                    break
+
+        if not isinstance(data, list):
+            raise RuntimeError('Format JSON inattendu : attendu une liste de tirages')
+
+        # Normaliser chaque tirage
+        normalized = [self._normalize_draw(d) for d in data]
+        return normalized
+
+    def _normalize_draw(self, d: Dict[str, Any]) -> Dict[str, Any]:
+        # Champs candidats pour la date
+        date_keys = ['date', 'draw_date', 'planned_at', 'draw_datetime', 'date_time']
+        numbers_keys = ['numbers', 'balls', 'draw', 'winning_numbers']
+        stars_keys = ['stars', 'lucky_stars', 'lucky_numbers']
+        prize_keys = ['prize', 'jackpot', 'estimated_jackpot']
+
+        out: Dict[str, Any] = {}
+
+        # date
+        for k in date_keys:
+            if k in d:
+                out['date'] = d[k]
+                break
+
+        # numbers
+        for k in numbers_keys:
+            if k in d:
+                out['numbers'] = d[k]
+                break
+
+        # stars
+        for k in stars_keys:
+            if k in d:
+                out['stars'] = d[k]
+                break
+
+        # prize / jackpot
+        for k in prize_keys:
+            if k in d:
+                out['prize'] = d[k]
+                break
+
+        # has_winner best-effort
+        if 'has_winner' in d:
+            out['has_winner'] = d.get('has_winner')
+        elif 'is_current' in d:
+            out['has_winner'] = not bool(d.get('is_current'))
+        else:
+            out['has_winner'] = None
+
+        # Garder champs originaux pour debug
+        out['_raw'] = d
+        return out
+
+    def save_to_local(self, file_path: str, draws: List[Dict[str, Any]]):
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(draws, f, ensure_ascii=False, indent=2)
+import json
 import re
 import urllib.error
 import urllib.request
